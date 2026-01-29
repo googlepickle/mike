@@ -15,10 +15,34 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-image: url('micheal.png');
-            background-repeat: repeat;
-            background-size: 100px 100px;
             cursor: grab;
+            position: relative;
+        }
+        
+        .checkerboard {
+            position: absolute;
+            top: -200px;
+            left: -200px;
+            width: calc(100% + 400px);
+            height: calc(100% + 400px);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 100px);
+            grid-template-rows: repeat(auto-fill, 100px);
+        }
+        
+        .tile {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+        }
+        
+        .tile.normal {
+            background-image: url('micheal.png');
+            filter: brightness(0.6);
+        }
+        
+        .tile.hdr {
+            background-image: url('micheal-hdr.png');
         }
         
         body.dragging {
@@ -27,7 +51,25 @@
     </style>
 </head>
 <body>
+    <div class="checkerboard" id="checkerboard"></div>
     <script>
+        // Generate checkerboard tiles
+        function generateCheckerboard() {
+            const container = document.getElementById('checkerboard');
+            const cols = Math.ceil((window.innerWidth + 400) / 100);
+            const rows = Math.ceil((window.innerHeight + 400) / 100);
+            container.innerHTML = '';
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile ' + ((row + col) % 2 === 0 ? 'normal' : 'hdr');
+                    container.appendChild(tile);
+                }
+            }
+            container.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
+        }
+        generateCheckerboard();
+        window.addEventListener('resize', generateCheckerboard);
         let offsetX = 0;
         let offsetY = 0;
         let isDragging = false;
@@ -47,7 +89,7 @@
             const dy = e.clientY - startY;
             offsetX += dx;
             offsetY += dy;
-            document.body.style.backgroundPosition = `${offsetX}px ${offsetY}px`;
+            document.getElementById('checkerboard').style.transform = `translate(${offsetX}px, ${offsetY}px)`;
             startX = e.clientX;
             startY = e.clientY;
         });
@@ -62,7 +104,7 @@
             e.preventDefault();
             offsetX -= e.deltaX;
             offsetY -= e.deltaY;
-            document.body.style.backgroundPosition = `${offsetX}px ${offsetY}px`;
+            document.getElementById('checkerboard').style.transform = `translate(${offsetX}px, ${offsetY}px)`;
         }, { passive: false });
     </script>
 </body>
