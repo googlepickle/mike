@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mike</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-image: url('micheal.png');
+            background-repeat: repeat;
+            background-size: 100px 100px;
+            cursor: grab;
+        }
+        
+        body.dragging {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let startX, startY;
+
+        // Mouse drag
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            document.body.classList.add('dragging');
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            offsetX += dx;
+            offsetY += dy;
+            document.body.style.backgroundPosition = `${offsetX}px ${offsetY}px`;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.classList.remove('dragging');
+        });
+
+        // Scroll wheel
+        document.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            offsetX -= e.deltaX;
+            offsetY -= e.deltaY;
+            document.body.style.backgroundPosition = `${offsetX}px ${offsetY}px`;
+        }, { passive: false });
+    </script>
+</body>
+</html>
